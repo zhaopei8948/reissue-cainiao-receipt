@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+        <title>根据文件补发回执</title>
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container">
+                <a class="navbar-brand" href="javascript:void(0)">菜鸟外网放行回执补发</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/maintain/cn/reissueByNo">根据订单号补发</a>
+                        </li>
+                        <li class="nav-item active">
+                            <a class="nav-link" href="/maintain/cn/reissueByFile">根据文件补发 <span class="sr-only">(current)</span></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div class="container">
+            <div class="alert alert-info" role="alert">
+                请按照格式上传文件,要求txt文本文件，每行一个订单号
+            </div>
+            <div class="alert alert-warning" role="alert">
+                <pre id="info"></pre>
+            </div>
+            <form action="/maintain/cn/caiNiaoReissueByFile" method="post">
+                <div class="custom-file">
+                    <input id="orderFile" type="file" class="custom-file-input" lang="zh"
+                           name="file" onchange="$('.custom-file-label').text(this.value);">
+                    <label class="custom-file-label">选择订单文件</label>
+                </div>
+                <button type="button" class="btn btn-primary" onclick="reissue(this)">提交</button>
+            </form>
+        </div>
+
+        <!-- Optional JavaScript -->
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+        <script>
+         function reissue(eventObj) {
+             var formObj = $(eventObj).parent();
+             var fileObj = document.getElementById('orderFile').files[0];
+             var formFile = new FormData();
+             formFile.append("file", fileObj);
+             $.ajax({
+                 url: formObj.attr('action'),
+                 data: formFile,
+                 type: 'POST',
+                 dataType: 'json',
+                 cache: false,
+                 processData: false,
+                 contentType: false,
+                 success: function(result) {
+                     var textInfo = "";
+                     for(i in result.info) {
+                        textInfo += result.info[i].info + "\r\n;
+                     }
+                    $('#info').html(textInfo);
+                 }
+             });
+         }
+        </script>
+    </body>
+</html>
